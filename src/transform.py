@@ -41,7 +41,12 @@ def flatten_flights_df(schema, prefix=None):
 
     return fields
 
-def transform_flights_df(flights_df):
-    flights_df = flights_df.select(flatten_flights_df(flights_df.schema))
+def transform_flights_df(flights_df, file_path):
+    flights_df = flights_df.select(transform_flights_df(flights_df.schema))
     cols_to_drop = [col.name  for col in flights_df.schema.fields if isinstance(col.dataType, ArrayType)]
-    return flights_df.drop(*cols_to_drop)
+    flights_df.drop(*cols_to_drop)\
+    .distinct()\
+    .na.drop("all")\
+    .write.option("header", True)\
+    .option("delimiter", ",")\
+    .csv(file_path)
