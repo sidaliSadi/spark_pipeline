@@ -27,7 +27,7 @@ def normalise_field(raw):
             .replace('.', '_') \
             .strip('_')
 
-def flatten(schema, prefix=None):
+def flatten_flights_df(schema, prefix=None):
     fields = []
     for field in schema.fields:
         name = "%s.`%s`" % (prefix, field.name) if prefix else "`%s`" % field.name
@@ -35,14 +35,13 @@ def flatten(schema, prefix=None):
         if isinstance(dtype, ArrayType):
             dtype = dtype.elementType
         if isinstance(dtype, StructType):
-            fields += flatten(dtype, prefix=name)
+            fields += flatten_flights_df(dtype, prefix=name)
         else:
             fields.append(F.col(name).alias(normalise_field(name)))
 
     return fields
 
 def transform_flights_df(flights_df):
-    flights_df = flights_df.select(flatten(flights_df.schema))
+    flights_df = flights_df.select(flatten_flights_df(flights_df.schema))
     cols_to_drop = [col.name  for col in flights_df.schema.fields if isinstance(col.dataType, ArrayType)]
     return flights_df.drop(*cols_to_drop)
-    
