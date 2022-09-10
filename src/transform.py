@@ -41,3 +41,8 @@ def flatten(schema, prefix=None):
 
     return fields
 
+def transform_flights_df(flights_df):
+    flights_df = flights_df.select(flatten(flights_df.schema))
+    cols_to_drop = [col.name  for col in flights_df.schema.fields if isinstance(col.dataType, ArrayType)]
+    return flights_df.drop(*cols_to_drop)
+    
