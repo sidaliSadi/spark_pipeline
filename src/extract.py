@@ -3,9 +3,7 @@ import os
 from pyspark.sql.functions import col
 import pyspark.sql.functions as F
 from pyspark.sql import Window, DataFrame
-from common import init_spark
 from tqdm import tqdm
-from FlightRadar24.api import FlightRadar24API
 import time
 import json
 

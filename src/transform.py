@@ -1,23 +1,15 @@
-import os
-
 from pyspark.sql.types import StructType, ArrayType  
 import pyspark.sql.functions as F
-from pyspark.sql import Window, DataFrame
-from common import init_spark
-from tqdm import tqdm
-from FlightRadar24.api import FlightRadar24API
-import time
-import json
+from .common import init_spark
 spark = init_spark("discover", driver_memory=40)
 
-def load_original_data(file_name, not_cleaned_data):
+def load_original_data(file_name):
     return spark.read.json(
-        os.path.join(not_cleaned_data, file_name),
+        file_name,
         encoding="utf-8",
         mode="FAILFAST",
         multiLine=True,
     )
-
 
 def normalise_field(raw):
     return raw.strip().lower() \
@@ -41,12 +33,9 @@ def flatten_flights_df(schema, prefix=None):
 
     return fields
 
-def transform_flights_df(flights_df, file_path):
-    flights_df = flights_df.select(transform_flights_df(flights_df.schema))
+def transform_flights_df(flights_df):
+    flights_df = flights_df.select(flatten_flights_df(flights_df.schema))
     cols_to_drop = [col.name  for col in flights_df.schema.fields if isinstance(col.dataType, ArrayType)]
-    flights_df.drop(*cols_to_drop)\
+    return flights_df.drop(*cols_to_drop)\
     .distinct()\
-    .na.drop("all")\
-    .write.option("header", True)\
-    .option("delimiter", ",")\
-    .csv(file_path)
+    .na.drop("all")
