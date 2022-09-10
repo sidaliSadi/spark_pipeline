@@ -8,7 +8,7 @@ from tqdm import tqdm
 from FlightRadar24.api import FlightRadar24API
 import time
 import json
-# spark = init_spark("discover", driver_memory=40)
+
 
 #get flight details
 def get_flight_details(flights, fr_api):
