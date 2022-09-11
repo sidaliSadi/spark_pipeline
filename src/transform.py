@@ -1,7 +1,16 @@
-from pyspark.sql.types import StructType, ArrayType  
+from pyspark.sql.types import StructType, ArrayType, FloatType
 import pyspark.sql.functions as F
 from .common import init_spark
+from geopy.distance import geodesic
+
+
 spark = init_spark("discover", driver_memory=40)
+
+
+#calculate distance
+@F.udf(returnType=FloatType())
+def geodesic_udf(a, b):
+    return geodesic(a, b).kilometers
 
 def load_original_data(file_name):
     return spark.read.json(
@@ -42,4 +51,10 @@ def transform_flights_df(flights_df):
     .withColumn('sameCountry', F.when(
     (F.col('destination_airport_country_name') == F.col('origin_airport_country_name')),
     F.lit(True))
-    .otherwise(F.lit(False)))
+    .otherwise(F.lit(False)))\
+    .withColumn("origin_airport_longitude",flights_df.origin_airport_longitude.cast(FloatType()))\
+    .withColumn("origin_airport_latitude",flights_df.origin_airport_latitude.cast(FloatType()))\
+    .withColumn("destination_airport_longitude",flights_df.destination_airport_longitude.cast(FloatType()))\
+    .withColumn("destination_airport_latitude",flights_df.destination_airport_latitude.cast(FloatType())) \
+    .withColumn('distance - km', geodesic_udf(F.array( "origin_airport_latitude", 'origin_airport_longitude'),F.array("destination_airport_latitude", 'destination_airport_longitude')))
+    
