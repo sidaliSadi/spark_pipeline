@@ -18,7 +18,7 @@ Spark pipeline on Flight Radar API
     └── without_cleaning            data folder containing extracted (not clean) files flights_details
 └── src
     ├── common
-        ├── common                  pyspark initialization
+        ├──  init_spark.py                pyspark initialization
 
     ├── extract.py                  extract data from FlightRadar API and save it
     └── transform.py                transform flights_details data
