@@ -3,7 +3,7 @@ Spark pipeline on Flight Radar API
 
 ## Usage
 
-1. Create virtual envirenemnt  `python3 -m v_env`
+1. Create virtual envirenemnt  `python3 -m venv v_env`
 2. Activate v_env `source v_venv/bin/activate `
 3. Run `git clone https://github.com/sidaliSadi/spark_pipeline.git`
 4. Run `cd spark_pipeline`
