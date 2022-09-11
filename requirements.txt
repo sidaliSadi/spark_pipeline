@@ -10,14 +10,22 @@ charset-normalizer==2.1.1
     # via requests
 flightradar24==0.3.1
     # via -r requirements.in
+geographiclib==1.52
+    # via geopy
+geopy==2.2.0
+    # via -r requirements.in
 idna==3.3
     # via requests
 numpy==1.23.3
-    # via pandas
+    # via
+    #   pandas
+    #   pyarrow
 pandas==1.4.4
     # via -r requirements.in
 py4j==0.10.9.5
     # via pyspark
+pyarrow==9.0.0
+    # via -r requirements.in
 pyspark==3.3.0
     # via -r requirements.in
 python-dateutil==2.8.2
